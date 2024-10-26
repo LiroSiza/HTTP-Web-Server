@@ -2,6 +2,8 @@ package Handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import server.Main;
+import server.Usuario;
 
 import java.io.*;
 import java.net.URLDecoder;
@@ -22,11 +24,20 @@ public class EchoPostHandler implements HttpHandler {
         String query = br.readLine();
         parseQuery(query, parameters);
 
+        // storage
+        Usuario newUser = new Usuario();
+        newUser.setName((String) parameters.get("name"));
+        newUser.setHobby((String) parameters.get("hobby"));
+        Main.dataStore.add(newUser);
+
         // send response
         String response = "";
-        for (String key : parameters.keySet()) {
+        response = "USER ADDED\n";
+        response += "name = " + newUser.getName() + "\n";
+        response += "hobby = " + newUser.getHobby() + "\n";
+        /*for (String key : parameters.keySet()) {
             response += key + "=" + parameters.get(key) + "\n";
-        }
+        }*/
         exchange.sendResponseHeaders(200, response.length());
         OutputStream os = exchange.getResponseBody();
         os.write(response.toString().getBytes());
